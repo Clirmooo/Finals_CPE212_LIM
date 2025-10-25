@@ -1,0 +1,48 @@
+---
+- name: Install Docker on all CentOS nodes
+  hosts: db_servers
+  become: yes
+
+  tasks:
+    - name: Update YUM package cache
+      ansible.builtin.yum:
+        update_cache: yes
+
+    - name: Install prerequisite packages
+      ansible.builtin.yum:
+        name:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+          - curl
+        state: present
+
+    - name: Add Docker CE repository for CentOS
+      ansible.builtin.command:
+        cmd: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+      args:
+        creates: /etc/yum.repos.d/docker-ce.repo
+
+    - name: Install Docker Engine
+      ansible.builtin.yum:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+
+    - name: Install pip for Python3 (CentOS)
+      ansible.builtin.yum:
+        name: python3-pip
+        state: present
+
+    - name: Install Docker SDK for Python
+      ansible.builtin.pip:
+        name: docker
+        state: present
+
+    - name: Ensure Docker service is started and enabled on boot
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes

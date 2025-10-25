@@ -3,8 +3,8 @@
   hosts: all
   become: yes
   vars:
-    container_name: webserver_prod
-    image_name: ubuntu:latest
+    container_name: nginx_container
+    image_name: nginx:latest
     host_port: 8080
 
   tasks:
@@ -15,8 +15,8 @@
       
     - name: Create and run the Nginx container
       docker_container:
-        name: "{{ container_name}}"
-        image: "{{ image_name}}"
+        name: "{{ container_name }}"
+        image: "{{ image_name }}"
         state: started
         restart_policy: always
         ports:
