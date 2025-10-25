@@ -1,0 +1,23 @@
+---
+- name: Deploy and manage Ubuntu Container
+  hosts: all
+  become: yes
+  vars:
+    container_name: webserver_prod
+    image_name: ubuntu:latest
+    host_port: 8080
+
+  tasks:
+    - name: Pull the latest Nginx image
+      docker_image:
+        name: "{{ image_name }}"
+        source: pull 
+      
+    - name: Create and run the Nginx container
+      docker_container:
+        name: "{{ container_name}}"
+        image: "{{ image_name}}"
+        state: started
+        restart_policy: always
+        ports:
+          - "{{ host_port}}:80"
